@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cloud_Navixy_CurrentStates</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/buttons/1.6.5/css/buttons.dataTables.min.css">
+
+</head>
+
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <table style="height: 100px;">
+                <tbody>
+                    <tr>
+                        <h5>
+                            <%= numberofunits %> Vehicles : Current State</h5>
+                    </tr>
+                    <tr>
+                        <h5 id="online">
+                            <%= online.length %> Vehicles : Online</h5>
+                    </tr>
+                    <tr>
+
+                        <h5 id="offline">
+                            <%= offline.length %> Vehicles : Offline</h5>
+                    </tr>
+                    <tr>
+
+                        <h5 id="justregistered">
+                            <%= justregistered.length %> Vehicles : Just Registered</h5>
+                    </tr>
+                </tbody>
+            </table>
+            <canvas id="bar-chart-horizontal"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+    <div class="container">
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+        <script>
+            //var online = online.length
+            new Chart(document.getElementById("bar-chart-horizontal"), {
+                type: 'horizontalBar',
+                data: {
+                    labels: ["ONLINE", "OFFLINE", "JUST_REGISTERED"],
+                    datasets: [{
+                        label: "Number Of Units",
+                        backgroundColor: ["#3cba9f", "#bf3d19", "#c4c2c3"],
+                        data: [9, 5, 3]
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Vehicles Summary'
+                    }
+                }
+            });
+        </script>
+    </div>
+
+
+    <div class="container">
+        <table id="CurrentStatesTable" class="cell-border compact stripe" -------------------------------->
+
+            <thead>
+                <tr>
+                    <th scope="col">Unit_ID</th>
+                    <th scope="col">IMEI</th>
+                    <th scope="col">Reg_Number</th>
+                    <th scope="col">MSISDN</th>
+                    <th scope="col">UNIT_MODEL</th>
+                    <th scope="col">DATE_CREATED</th>
+                    <th scope="col">GPS_Updated</th>
+                    <th scope="col">Days Offline</th>
+                    <th scope="col">GPS_Signal_Level</th>
+                    <th scope="col">GPS_Lat</th>
+                    <th scope="col">GPS_Long</th>
+                    <!-- <th scope="col">GPS_Heading</th> -->
+                    <th scope="col">GPS_Speed</th>
+                    <!-- <th scope="col">GPS_Alt</th> -->
+                    <th scope="col">Connection_Status</th>
+                    <!-- <th scope="col">Movement_Status</th> -->
+                    <th scope="col">GSM_Updated</th>
+                    <th scope="col">GSM_Signal_Level</th>
+                    <!-- <th scope="col">GSM_Network_Name</th> -->
+                    <!-- <th scope="col">GSM_Roaming</th> -->
+                    <th scope="col">Last_Update</th>
+                    <th scope="col">Battery_Level</th>
+                    <!-- <th scope="col">Battery_Update</th> -->
+
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+
+                <%  
+                online.splice(0, online.length)
+                offline.splice(0, offline.length)
+                justregistered.splice(0, justregistered.length)
+                    for(var i = 0 ; i<trackers.length ; i ++){
+                    const index =trackers[i]
+                    var lastreported = new Date(bodydata[index]["gps"]["updated"])
+                    var daysoffline = Math.round((currentdate-lastreported)/86400000)
+                    if(daysoffline<31){online.push(idresult["list"][i]["label"])}
+                    if(daysoffline>31&&daysoffline<	18706){offline.push(idresult["list"][i]["label"])}
+                    if(bodydata[index]["connection_status"]=="just_registered"){justregistered.push(idresult["list"][i]["label"])}
+                   
+                    %>
+                    <tr>
+                        <th data-title=" Tracker ID">
+                            <%=index%>
+                        </th>
+                        <td>
+
+                            <%=idresult["list"][i]["source"]["device_id"]%>
+                        </td>
+                        <td>
+                            <%=idresult["list"][i]["label"]%>
+
+                        </td>
+                        <td>
+
+                            <%=idresult["list"][i]["source"]["phone"]%>
+                        </td>
+                        <td>
+
+                            <%=idresult["list"][i]["source"]["model"]%>
+                        </td>
+                        <td>
+
+                            <%=idresult["list"][i]["source"]["creation_date"]%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["gps"]["updated"]%>
+                        </td>
+                        <td>
+                            <%=daysoffline%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["gps"]["signal_level"]%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["gps"]["location"]["lat"]%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["gps"]["location"]["lng"]%>
+                        </td>
+
+                        <td>
+                            <%=bodydata[index]["gps"]["speed"]%>
+                        </td>
+
+                        <td>
+                            <%=bodydata[index]["connection_status"]%>
+                        </td>
+
+                        <td>
+                            <%=bodydata[index]["gsm"]["updated"]%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["gsm"]["signal_level"]%>
+                        </td>
+
+
+                        <td>
+                            <%=bodydata[index]["last_update"]%>
+                        </td>
+                        <td>
+                            <%=bodydata[index]["battery_level"]%>
+                        </td>
+
+
+                    </tr>
+
+
+                    <%   } %>
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+    </div>
+    <span><a href="/search" >New Search </a></span>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.6.5/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#CurrentStatesTable').DataTable({
+                "paging": false,
+                "ordering": true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy',
+                    'excel',
+                    'csv',
+                    'pdf',
+                    'colvis'
+                ]
+            });
+        });
+    </script>
+</body>
+
+
+
+</html>

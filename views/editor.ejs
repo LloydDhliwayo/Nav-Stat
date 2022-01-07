@@ -1,0 +1,248 @@
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <h4 style="text-align:center">Search For Valid User ID</h4>
+
+            <form action="/results" method="GET">
+                <div style="text-align: center">
+                    <!-- <label for="mySearch">Search for user</label> -->
+                    <input type="text" id="mySearch" name="userid" placeholder="Enter User API id" required size="40" minlength="20" maxlength="40">
+                    <input type="submit" class="btn btn-primary ">
+                    <span class="validity"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <h4 style="text-align:center">Customer Has
+                <%=numberofunits%> Units On Navixy Cloud</h4>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <div>
+                <span> <form action="/detailed" method="GET">
+            <div>
+                <label for="mySearch">  </label>
+                <!-- <input type="text" id="mySearch" name="userid" placeholder="Enter User API id" required size="40" minlength="20" maxlength="40"> -->
+               <div><input type="submit" class ="btn btn-primary btn-large" value="Click to Get Current Units Status.."></div> 
+                <span class="validity"></span>
+            </div>
+            </form>
+            </span>
+        </div>
+
+        <div><a href="<%=url%>">Download CSV </a></div>
+        <div></div><a href="<%=currentstats%>">Download Current trackers Status CSV </a>
+    </div>
+    <div><a href="/search">New Search </a></div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <canvas id="bar-chart-horizontal"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="col-md-6 offset-md-3 my-5">
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <table style="height: 100px;">
+                <tbody>
+                    <tr>
+                        <h5>
+                            <%= numberofunits %> Vehicles : Current State</h5>
+                    </tr>
+                    <tr>
+                        <h5 id="online">
+                            <%= online.length %> Vehicles : Online</h5>
+                    </tr>
+                    <tr>
+
+                        <h5 id="offline">
+                            <%= offline.length %> Vehicles : Offline</h5>
+                    </tr>
+                    <tr>
+
+                        <h5 id="justregistered">
+                            <%= justregistered.length %> Vehicles : Just Registered</h5>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="w-50 mx-auto">
+    <hr>
+    <table style="height: 100px;">
+        <tbody>
+            <tr>
+                <h5>
+                    <%= numberofunits %> Vehicles : Current State</h5>
+            </tr>
+            <tr>
+                <h5 id="online">
+                    <%= online.length %> Vehicles : Online</h5>
+            </tr>
+            <tr>
+
+                <h5 id="offline">
+                    <%= offline.length %> Vehicles : Offline</h5>
+            </tr>
+            <tr>
+
+                <h5 id="justregistered">
+                    <%= justregistered.length %> Vehicles : Just Registered</h5>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+<tbody>
+
+
+    <%  
+    online.splice(0, online.length)
+    offline.splice(0, offline.length)
+    justregistered.splice(0, justregistered.length)
+        for(var i = 0 ; i<trackers.length ; i ++){
+        const index =trackers[i]
+        var lastreported = new Date(bodydata[index]["gps"]["updated"])
+        var daysoffline = Math.round((currentdate-lastreported)/86400000)
+        if(daysoffline<31){online.push(idresult["list"][i]["label"])}
+        if(daysoffline>31&&daysoffline<	18706){offline.push(idresult["list"][i]["label"])}
+        if(bodydata[index]["connection_status"]=="just_registered"){justregistered.push(idresult["list"][i]["label"])}
+       
+        %>
+        <tr>
+            <th data-title=" Tracker ID">
+                <%=index%>
+            </th>
+            <td>
+
+                <%=idresult["list"][i]["source"]["device_id"]%>
+            </td>
+            <td>
+                <%=idresult["list"][i]["label"]%>
+
+            </td>
+            <td>
+
+                <%=idresult["list"][i]["source"]["phone"]%>
+            </td>
+            <td>
+
+                <%=idresult["list"][i]["source"]["model"]%>
+            </td>
+            <td>
+
+                <%=idresult["list"][i]["source"]["creation_date"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["updated"]%>
+            </td>
+            <td>
+                <%=daysoffline%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["signal_level"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["location"]["lat"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["location"]["lng"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["heading"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["speed"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gps"]["alt"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["connection_status"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["movement_status"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gsm"]["updated"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gsm"]["signal_level"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gsm"]["network_name"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["gsm"]["roaming"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["last_update"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["battery_level"]%>
+            </td>
+            <td>
+                <%=bodydata[index]["battery_update"]%>
+            </td>
+
+        </tr>
+
+
+        <%   } %>
+</tbody>
